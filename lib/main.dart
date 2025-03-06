@@ -17,6 +17,8 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -64,6 +66,8 @@ class _MyAppState extends State<MyApp> {
 }
 
 class PrintServiceScreen extends StatefulWidget {
+  const PrintServiceScreen({super.key});
+
   @override
   _PrintServiceScreenState createState() => _PrintServiceScreenState();
 
@@ -208,66 +212,64 @@ class _PrintServiceScreenState extends State<PrintServiceScreen> {
     return Uint8List.fromList(receivedData);
   }
 
+  Future<void> saveIPPDocument(Uint8List ippData) async {
+    print("📥 Received IPP Data: ${ippData.length} bytes");
 
-
-Future<void> saveIPPDocument(Uint8List ippData) async {
-  print("📥 Received IPP Data: ${ippData.length} bytes");
-
-  // Identify the correct start of document
-  int docStartIndex = findDocumentStartIndex(ippData);
-  if (docStartIndex == -1 || docStartIndex >= ippData.length - 1) {
-    print("❌ No valid document data found in the IPP request!");
-    return;
-  }
-
-  // Extract document bytes
-  Uint8List documentData = ippData.sublist(docStartIndex);
-  if (documentData.isEmpty) {
-    print("❌ Document data is empty after IPP headers!");
-    return;
-  }
-
-  print("✅ Extracted Document Data: ${documentData.length} bytes");
-
-  try {
-    // Request permissions
-    if (Platform.isAndroid) {
-      var status = await Permission.manageExternalStorage.request();
-      if (!status.isGranted) {
-        print("❌ Storage permission denied!");
-        return;
-      }
-    }
-
-    // Set file save directory
-    Directory? directory;
-    if (Platform.isAndroid) {
-      directory = Directory("/storage/emulated/0/Download"); // ✅ Save in Downloads folder
-    } else {
-      directory = await getApplicationDocumentsDirectory(); // iOS alternative
-    }
-
-    if (!directory.existsSync()) {
-      print("❌ Storage directory not found!");
+    // Identify the correct start of document
+    int docStartIndex = findDocumentStartIndex(ippData);
+    if (docStartIndex == -1 || docStartIndex >= ippData.length - 1) {
+      print("❌ No valid document data found in the IPP request!");
       return;
     }
 
-    // Generate unique filename
-    String filePath = "${directory.path}/printed_document_${DateTime.now().millisecondsSinceEpoch}.pdf";
+    // Extract document bytes
+    Uint8List documentData = ippData.sublist(docStartIndex);
+    if (documentData.isEmpty) {
+      print("❌ Document data is empty after IPP headers!");
+      return;
+    }
 
-    // Write file
-    File file = File(filePath);
-    await file.writeAsBytes(documentData);
+    print("✅ Extracted Document Data: ${documentData.length} bytes");
 
-    print("📂 Document saved at: $filePath");
-  } catch (e) {
-    print("❌ Error saving document: $e");
+    try {
+      // Request permissions
+      if (Platform.isAndroid) {
+        var status = await Permission.manageExternalStorage.request();
+        if (!status.isGranted) {
+          print("❌ Storage permission denied!");
+          return;
+        }
+      }
+
+      // Set file save directory
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory(
+            "/storage/emulated/0/Download"); // ✅ Save in Downloads folder
+      } else {
+        directory = await getApplicationDocumentsDirectory(); // iOS alternative
+      }
+
+      if (!directory.existsSync()) {
+        print("❌ Storage directory not found!");
+        return;
+      }
+
+      // Generate unique filename
+      String filePath =
+          "${directory.path}/printed_document_${DateTime.now().millisecondsSinceEpoch}.pdf";
+
+      // Write file
+      File file = File(filePath);
+      await file.writeAsBytes(documentData);
+
+      print("📂 Document saved at: $filePath");
+    } catch (e) {
+      print("❌ Error saving document: $e");
+    }
   }
-}
 
 // Function to identify correct start index
-
-
 
   int findDocumentStartIndex(Uint8List ippData) {
     int minDocumentSize = 100; // A rough threshold for skipping small headers

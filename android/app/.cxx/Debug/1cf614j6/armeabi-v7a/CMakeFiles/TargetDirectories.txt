@@ -1,0 +1,2 @@
+/Users/santomartin/Documents/Flutter projects/freelance projects/admin_GYM_app/Untitled/printerapp/android/app/.cxx/Debug/1cf614j6/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/santomartin/Documents/Flutter projects/freelance projects/admin_GYM_app/Untitled/printerapp/android/app/.cxx/Debug/1cf614j6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
