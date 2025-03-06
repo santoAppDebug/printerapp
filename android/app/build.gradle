@@ -9,6 +9,7 @@ android {
     namespace = "com.example.newprinterapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -17,6 +18,9 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        pickFirst 'META-INF/DEPENDENCIES'
     }
 
     defaultConfig {
@@ -46,5 +50,9 @@ flutter {
 
 dependencies {
     // implementation("org.cups:cups4j:0.7.9")
+    implementation 'javax.mail:mail:1.4.7'
+    implementation("org.slf4j:slf4j-simple:1.7.36")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    
 }
